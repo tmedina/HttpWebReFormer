@@ -24,10 +24,10 @@ namespace HttpWebReFormer
 {
 	public static class HttpWebREquestExtensions
 	{
-			/*******************************************************
-			 * 	Body
-			 * 		Write string data into the body of a request
-			*******************************************************/
+		/*******************************************************
+		 * Body
+		 *   Write string data into the body of a request
+		*******************************************************/
 		public static void Body(this HttpWebRequest r, string data)
 		{
 			byte[] bytes = Encoding.UTF8.GetBytes(data);
@@ -62,10 +62,10 @@ namespace HttpWebReFormer
 
 		}
 
-				/************************************************************
-				 * GetResponseStreamCopy
-				 * 	Copy the ResponseStream into memory and cache it for reuse
-				************************************************************/
+		/************************************************************
+		 * GetResponseStreamCopy
+		 *   Copy the ResponseStream into memory and cache it for reuse
+		************************************************************/
 		public static Stream GetResponseStreamCopy(this HttpWebResponse r)
 		{
 			if (!streamCache.ContainsKey(r))
@@ -80,11 +80,11 @@ namespace HttpWebReFormer
 
 		}
 
-        /**************************************************************
-				 * GetResponseDocument
-				 * 	Parse the response stream and cache it for reuse. Uses the
-				 * 	HtmlAgilityPack library for the heavy lifting.
-				**************************************************************/
+		/**************************************************************
+		 * GetResponseDocument
+		 *  Parse the response stream and cache it for reuse. Uses the
+		 *  HtmlAgilityPack library for the heavy lifting.
+		**************************************************************/
 		public static HtmlDocument GetResponseDocument(this HttpWebResponse r)
 		{
 			if (!documentCache.ContainsKey(r))
@@ -132,39 +132,39 @@ namespace HttpWebReFormer
 				new
 				{
 					id = f.Attributes
-								.Where(a => a.Name == "id")
+							.Where(a => a.Name == "id")
+							.Select(a => a.Value)
+							.DefaultIfEmpty("")
+							.First(),
+					name = f.Attributes
+							.Where(a => a.Name == "name")
+							.Select(a => a.Value)
+							.DefaultIfEmpty("")
+							.First(),
+					method = f.Attributes
+								.Where(a => a.Name == "method")
 								.Select(a => a.Value)
 								.DefaultIfEmpty("")
 								.First(),
-					name = f.Attributes
-									.Where(a => a.Name == "name")
-									.Select(a => a.Value)
-									.DefaultIfEmpty("")
-									.First(),
-					method = f.Attributes
-										.Where(a => a.Name == "method")
-										.Select(a => a.Value)
-										.DefaultIfEmpty("")
-										.First(),
 					action = f.Attributes
-										.Where(a => a.Name == "action")
-										.Select(a => a.Value)
-										.DefaultIfEmpty("")
-										.First(),
+								.Where(a => a.Name == "action")
+								.Select(a => a.Value)
+								.DefaultIfEmpty("")
+								.First(),
 					inputs = f.Descendants()
-										.Where(d => d.Name == "input")
-										.Select(i => i.Attributes.ToList())
-										.Select(ag => new
-											{
-												name = ag.Where(a => a.Name == "name")
-																	.Select(a => a.Value)
-																	.DefaultIfEmpty("")
-																	.First(),
-												value = ag.Where(a => a.Name == "value")
-																						.Select(a => a.Value)
-																						.DefaultIfEmpty("")
-																						.First(),
-											})
+								.Where(d => d.Name == "input")
+								.Select(i => i.Attributes.ToList())
+								.Select(ag => new
+								{
+									name = ag.Where(a => a.Name == "name")
+												.Select(a => a.Value)
+												.DefaultIfEmpty("")
+												.First(),
+									value = ag.Where(a => a.Name == "value")
+												.Select(a => a.Value)
+												.DefaultIfEmpty("")
+												.First(),
+								})
 				}
 			);
 
