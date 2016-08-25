@@ -127,43 +127,43 @@ namespace HttpWebReFormer
 			}
 
 			var listOfForms = parsedDoc.DocumentNode.Descendants()
-				.Where(d => d.Name == "form")
-				.Select(f =>
+			   .Where(d => d.Name == "form")
+			   .Select(f =>
 				new
 				{
 					id = f.Attributes
-							.Where(a => a.Name == "id")
-							.Select(a => a.Value)
-							.DefaultIfEmpty("")
-							.First(),
+					      .Where(a => a.Name == "id")
+					      .Select(a => a.Value)
+					      .DefaultIfEmpty("")
+					      .First(),
 					name = f.Attributes
-							.Where(a => a.Name == "name")
-							.Select(a => a.Value)
-							.DefaultIfEmpty("")
-							.First(),
+					        .Where(a => a.Name == "name")
+					        .Select(a => a.Value)
+					        .DefaultIfEmpty("")
+					        .First(),
 					method = f.Attributes
-								.Where(a => a.Name == "method")
-								.Select(a => a.Value)
-								.DefaultIfEmpty("")
-								.First(),
+					          .Where(a => a.Name == "method")
+					          .Select(a => a.Value)
+					          .DefaultIfEmpty("")
+					          .First(),
 					action = f.Attributes
-								.Where(a => a.Name == "action")
-								.Select(a => a.Value)
-								.DefaultIfEmpty("")
-								.First(),
+					          .Where(a => a.Name == "action")
+					          .Select(a => a.Value)
+					          .DefaultIfEmpty("")
+					          .First(),
 					inputs = f.Descendants()
-								.Where(d => d.Name == "input")
-								.Select(i => i.Attributes.ToList())
-								.Select(ag => new
+					          .Where(d => d.Name == "input")
+					          .Select(i => i.Attributes.ToList())
+					          .Select(ag => new
 								{
 									name = ag.Where(a => a.Name == "name")
-												.Select(a => a.Value)
-												.DefaultIfEmpty("")
-												.First(),
+									         .Select(a => a.Value)
+									         .DefaultIfEmpty("")
+									         .First(),
 									value = ag.Where(a => a.Name == "value")
-												.Select(a => a.Value)
-												.DefaultIfEmpty("")
-												.First(),
+									          .Select(a => a.Value)
+									          .DefaultIfEmpty("")
+									          .First(),
 								})
 				}
 			);
