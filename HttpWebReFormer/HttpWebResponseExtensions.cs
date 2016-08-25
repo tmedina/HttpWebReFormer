@@ -22,96 +22,97 @@ using HttpWebReFormer;
 
 namespace HttpWebReFormer
 {
-		public static class HttpWebREquestExtensions
-		{
-			/*******************************************************
+    public static class HttpWebREquestExtensions
+    {
+        /*******************************************************
 			 * 	Body
 			 * 		Write string data into the body of a request
 			*******************************************************/
-			public static void Body(this HttpWebRequest r, string data)
-			{
-        byte[] bytes = Encoding.UTF8.GetBytes(data);
-        r.ContentLength = bytes.Length;
-        var reqStream = r.GetRequestStream();
-        using (StreamWriter strWriter = new StreamWriter(reqStream))
+        public static void Body(this HttpWebRequest r, string data)
         {
-            strWriter.Write(data);
-            strWriter.Flush();
+            byte[] bytes = Encoding.UTF8.GetBytes(data);
+            r.ContentLength = bytes.Length;
+            var reqStream = r.GetRequestStream();
+            using (StreamWriter strWriter = new StreamWriter(reqStream))
+            {
+                strWriter.Write(data);
+                strWriter.Flush();
+            }
+
+
         }
-
-
-			}
-		}
+    }
 
     public static class HttpWebResponseExtensions
     {
-				public static bool EnableCaching { get; set; }
+        public static bool EnableCaching { get; set; }
 
-				//Caches
-				private static Dictionary<HttpWebResponse, HtmlDocument> documentCache = new Dictionary<HttpWebResponse, HtmlDocument>();
-				private static Dictionary<HttpWebResponse, MemoryStream> streamCache = new Dictionary<HttpWebResponse, MemoryStream>();
-				private static Dictionary<HttpWebResponse, IEnumerable<Dictionary<string,string>>> linksCache = new Dictionary<HttpWebResponse, IEnumerable<Dictionary<string,string>>>();
-				private static Dictionary<HttpWebResponse, IEnumerable<Dictionary<string,string>>> imagesCache = new Dictionary<HttpWebResponse, IEnumerable<Dictionary<string,string>>>();
-				private static Dictionary<HttpWebResponse, List<HttpWebResponseForm>> formsCache = new Dictionary<HttpWebResponse, List<HttpWebResponseForm>>();
+        //Caches
+        private static Dictionary<HttpWebResponse, HtmlDocument> documentCache = new Dictionary<HttpWebResponse, HtmlDocument>();
+        private static Dictionary<HttpWebResponse, MemoryStream> streamCache = new Dictionary<HttpWebResponse, MemoryStream>();
+        private static Dictionary<HttpWebResponse, IEnumerable<Dictionary<string,string>>> linksCache = new Dictionary<HttpWebResponse, IEnumerable<Dictionary<string,string>>>();
+        private static Dictionary<HttpWebResponse, IEnumerable<Dictionary<string,string>>> imagesCache = new Dictionary<HttpWebResponse, IEnumerable<Dictionary<string,string>>>();
+        private static Dictionary<HttpWebResponse, List<HttpWebResponseForm>> formsCache = new Dictionary<HttpWebResponse, List<HttpWebResponseForm>>();
 
-				//CTOR
-				static HttpWebResponseExtensions()
-				{
-					EnableCaching = true;
-          HtmlNode.ElementsFlags.Remove("form");
+        //CTOR
+        static HttpWebResponseExtensions()
+        {
+            EnableCaching = true;
+            HtmlNode.ElementsFlags.Remove("form");
 
-				}
+        }
 
-				/************************************************************
+        /************************************************************
 				 * GetResponseStreamCopy
 				 * 	Copy the ResponseStream into memory and cache it for reuse
 				************************************************************/
-				public static Stream GetResponseStreamCopy(this HttpWebResponse r)
-				{
-					if( ! streamCache.ContainsKey(r) )
-					{
-						MemoryStream ms = new MemoryStream();
-						r.GetResponseStream().CopyTo(ms);
-						//Always Cache
-						streamCache.Add(r, ms);
-					}
-					streamCache[r].Position = 0;
-					return streamCache[r] as Stream;
+        public static Stream GetResponseStreamCopy(this HttpWebResponse r)
+        {
+            if (!streamCache.ContainsKey(r))
+            {
+                MemoryStream ms = new MemoryStream();
+                r.GetResponseStream().CopyTo(ms);
+                //Always Cache
+                streamCache.Add(r, ms);
+            }
+            streamCache[r].Position = 0;
+            return streamCache[r] as Stream;
 
-				}
+        }
 
-				/**************************************************************
+        /**************************************************************
 				 * GetResponseDocument
 				 * 	Parse the response stream and cache it for reuse. Uses the
 				 * 	HtmlAgilityPack library for the heavy lifting.
 				**************************************************************/
-				public static HtmlDocument GetResponseDocument(this HttpWebResponse r)
-				{
-					if(! documentCache.ContainsKey(r))
-					{
-						
-            try
+        public static HtmlDocument GetResponseDocument(this HttpWebResponse r)
+        {
+            if (!documentCache.ContainsKey(r))
             {
-								HtmlDocument doc = new HtmlDocument();
-                doc.Load(r.GetResponseStreamCopy());
-								//Always Cache
-								documentCache.Add(r, doc);
-            }
-            catch (Exception e)
-            {
-               throw new Exception("Unable to load HtmlDocument from Response Stream. "+e.Message);
-            }
 						
-					}
-					return documentCache[r];
+                try
+                {
+                    HtmlDocument doc = new HtmlDocument();
+                    doc.Load(r.GetResponseStreamCopy());
+                    //Always Cache
+                    documentCache.Add(r, doc);
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Unable to load HtmlDocument from Response Stream. " + e.Message);
+                }
+						
+            }
+            return documentCache[r];
 
 
-				}
+        }
 
-				// Extract the forms from the parsed response stream
+        // Extract the forms from the parsed response stream
         public static List<HttpWebResponseForm> Forms(this HttpWebResponse r)
         {
-						if(formsCache.ContainsKey(r)) return formsCache[r];
+            if (formsCache.ContainsKey(r))
+                return formsCache[r];
 
             var result = new List<HttpWebResponseForm>();
 
@@ -183,38 +184,43 @@ namespace HttpWebReFormer
                 result.Add(form);
             }
 
-						if(EnableCaching) formsCache.Add(r, result);
+            if (EnableCaching)
+                formsCache.Add(r, result);
             return result;
 
         }
 
 
-				// Extract img tags and attributes
+        // Extract img tags and attributes
         public static IEnumerable<Dictionary<string, string>> Images(this HttpWebResponse r)
-				{
-					if(imagesCache.ContainsKey(r)) return imagesCache[r];
-					var result = r.GetTags("img");
-					if(EnableCaching) imagesCache.Add(r, result);
-					return result;
-				}
+        {
+            if (imagesCache.ContainsKey(r))
+                return imagesCache[r];
+            var result = r.GetTags("img");
+            if (EnableCaching)
+                imagesCache.Add(r, result);
+            return result;
+        }
 
-				// Extract a tags and attributes
+        // Extract a tags and attributes
         public static IEnumerable<Dictionary<string, string>> Links(this HttpWebResponse r)
-				{
-					if(linksCache.ContainsKey(r)) return imagesCache[r];
-					var result =  r.GetTags("a");
-					if(EnableCaching) linksCache.Add(r, result);
-					return result;
-				}
+        {
+            if (linksCache.ContainsKey(r))
+                return imagesCache[r];
+            var result = r.GetTags("a");
+            if (EnableCaching)
+                linksCache.Add(r, result);
+            return result;
+        }
 
-				// Extract tags and attributes
+        // Extract tags and attributes
         public static IEnumerable<Dictionary<string, string>> GetTags(this HttpWebResponse r, string tagName)
         {
 
             HtmlDocument parsedDoc;
             try
             {
-							parsedDoc = GetResponseDocument(r);
+                parsedDoc = GetResponseDocument(r);
             }
             catch
             {
@@ -224,18 +230,19 @@ namespace HttpWebReFormer
             var attributeMap = parsedDoc.DocumentNode.Descendants()
             	.Where(d => d.Name == tagName)
 							.Select(
-								tag => (new List<KeyValuePair<string, string>>() {
-													new KeyValuePair<string, string>("innerHTML", tag.InnerHtml),
-													new KeyValuePair<string, string>("outerHTML", tag.OuterHtml),
-													new KeyValuePair<string, string>("innerText", tag.InnerText),
-													new KeyValuePair<string, string>("tagName", tag.Name),
-											})
+                                   tag => (new List<KeyValuePair<string, string>>()
+                {
+                    new KeyValuePair<string, string>("innerHTML", tag.InnerHtml),
+                    new KeyValuePair<string, string>("outerHTML", tag.OuterHtml),
+                    new KeyValuePair<string, string>("innerText", tag.InnerText),
+                    new KeyValuePair<string, string>("tagName", tag.Name),
+                })
 											.Union(
-												tag.Attributes
+                                       tag.Attributes
 												.Select(attr => new KeyValuePair<string, string>(attr.Name, attr.Value))
-											)
+                                   )
 											.ToDictionary(k => k.Key, v => v.Value)
-							);
+                               );
 
             return attributeMap;
         }
