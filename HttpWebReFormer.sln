@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpWebReFormer", "HttpWebReFormer\HttpWebReFormer.csproj", "{405CB024-048B-47A6-A43D-631A52F28241}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpWebReFormer_Tests", "HttpWebReFormer_Tests\HttpWebReFormer_Tests.csproj", "{710B9022-1151-4C15-B085-850763A6A04B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleProgram", "SampleProgram\SampleProgram.csproj", "{091475DA-A857-4665-8BBC-81AACAA3201E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{091475DA-A857-4665-8BBC-81AACAA3201E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{091475DA-A857-4665-8BBC-81AACAA3201E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{091475DA-A857-4665-8BBC-81AACAA3201E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{091475DA-A857-4665-8BBC-81AACAA3201E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{405CB024-048B-47A6-A43D-631A52F28241}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{405CB024-048B-47A6-A43D-631A52F28241}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{405CB024-048B-47A6-A43D-631A52F28241}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{405CB024-048B-47A6-A43D-631A52F28241}.Release|Any CPU.Build.0 = Release|Any CPU
+		{710B9022-1151-4C15-B085-850763A6A04B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{710B9022-1151-4C15-B085-850763A6A04B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{710B9022-1151-4C15-B085-850763A6A04B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{710B9022-1151-4C15-B085-850763A6A04B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
